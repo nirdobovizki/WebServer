@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace NirDobovizki.WebServer.Generated
+{
+    internal class MimeTypes
+    {
+        public static readonly Dictionary<string, string> MimeTypeMap = new Dictionary<string, string>
+        {
+            %CONTENT%
+        };
+
+    }
+}

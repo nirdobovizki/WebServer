@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>NirDobovizki.WebServer Example</title>
+</head>
+<body>
+    <div id="normalPage">
+        <button onclick="doSomething()">Do Something</button>
+        <button onclick="logout()">Log out</button>
+    </div>
+    <div id="loginPage" style="display:none">
+        <div><label>User name:</label><input id="username" type="text" /></div>
+        <div><label>Password:</label><input id="password" type="password" /></div>
+        <div>The correct login is admin/admin</div>
+        <button onclick="login()">Login</button>
+    </div>
+    <script>
+        var token;
+
+        async function doSomething() {
+            var fetchResult = await fetch('/doSomething', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+            if (fetchResult.status == 200) {
+                alert("Success, result is " + await fetchResult.text());
+            }
+            if (fetchResult.status == 403) {
+                alert("Need to log in");
+                document.getElementById("normalPage").style = "display:none";
+                document.getElementById("loginPage").style = "";
+            }
+            return false;
+        }
+
+        async function login() {
+            var fetchResult = await fetch('/login', {
+                method: 'POST',
+                body: JSON.stringify({
+                    "name": document.getElementById("username").value,
+                    "password": document.getElementById("password").value
+                }), 
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (fetchResult.status == 200) {
+                token = (await fetchResult.json()).token;
+                document.getElementById("normalPage").style = "";
+                document.getElementById("loginPage").style = "display:none";
+            }
+            else {
+                alert("log in failed");
+            }
+            return false;
+        }
+
+        async function logout() {
+            var fetchResult = await fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+            if (fetchResult.status == 200) {
+                alert("logout success");
+            }
+            return false;
+        }
+
+
+
+    </script>
+</body>
+</html>
